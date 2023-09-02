@@ -156,6 +156,9 @@ PRODUCT_PACKAGES += \
     camera.msm8953 \
     libcamshim \
     libui_shim
+    
+PRODUCT_PACKAGES += \
+    GrapheneCamera
 
 # Cgroup and task_profiles
 PRODUCT_COPY_FILES += \
