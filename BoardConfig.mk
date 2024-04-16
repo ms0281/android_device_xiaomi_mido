@@ -155,6 +155,10 @@ SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/private
 # Treble
 PRODUCT_FULL_TREBLE_OVERRIDE := true
 
+# Verified Boot
+# (only needed for signing)
+BOARD_AVB_ENABLE := false
+
 # Wi-Fi
 BOARD_HOSTAPD_DRIVER := NL80211
 BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_qcwcn
