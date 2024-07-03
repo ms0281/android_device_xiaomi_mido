@@ -33,7 +33,6 @@ TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a53
 
 # Build
 BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
-BUILD_BROKEN_INCORRECT_PARTITION_IMAGES := true
 TARGET_ENFORCES_QSSI := true
 
 # Device Properties
@@ -46,7 +45,7 @@ TARGET_VENDOR_PROP := $(DEVICE_PATH)/vendor.prop
 # Kernel
 TARGET_KERNEL_CONFIG := mido_defconfig
 BOARD_KERNEL_BASE := 0x80000000
-BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom msm_rtb.filter=0x237 ehci-hcd.park=3 lpm_levels.sleep_disabled=1 androidboot.bootdevice=7824900.sdhci earlycon=msm_hsl_uart,0x78af000 loop.max_part=7 androidboot.usbconfigfs=true cgroup_disable=pressure
+BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom msm_rtb.filter=0x237 ehci-hcd.park=3 lpm_levels.sleep_disabled=1 androidboot.bootdevice=7824900.sdhci earlycon=msm_hsl_uart,0x78af000 loop.max_part=7 androidboot.usbconfigfs=true androidboot.usbcontroller=7000000.dwc3 cgroup_disable=pressure
 BOARD_KERNEL_CMDLINE += androidboot.boot_devices=soc/7824900.sdhci
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 BOARD_KERNEL_PAGESIZE :=  2048
@@ -58,7 +57,6 @@ TARGET_KERNEL_VERSION := 4.9
 BOARD_ANT_WIRELESS_DEVICE := "vfs-prerelease"
 
 # Audio
-AUDIO_FEATURE_ENABLED_DS2_DOLBY_DAP := true
 AUDIO_FEATURE_ENABLED_EXTENDED_COMPRESS_FORMAT := true
 AUDIO_USE_LL_AS_PRIMARY_OUTPUT := true
 BOARD_SUPPORTS_OPENSOURCE_STHAL := true
@@ -102,6 +100,11 @@ BOARD_VENDOR_QCOM_GPS_LOC_API_HARDWARE := default
 LOC_HIDL_VERSION := 4.0
 
 # HIDL
+DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := \
+    hardware/qcom-caf/common/vendor_framework_compatibility_matrix.xml \
+    hardware/xiaomi/vintf/xiaomi_framework_compatibility_matrix.xml \
+    vendor/lineage/config/device_framework_matrix.xml \
+    $(DEVICE_PATH)/dolby_compat_framework_matrix.xml
 DEVICE_MANIFEST_FILE := $(DEVICE_PATH)/manifest.xml
 DEVICE_MATRIX_FILE   := hardware/qcom-caf/common/compatibility_matrix.xml
 
@@ -141,7 +144,7 @@ ENABLE_VENDOR_RIL_SERVICE := true
 TARGET_USES_OLD_MNC_FORMAT := true
 
 # Security patch level
-VENDOR_SECURITY_PATCH := 2023-12-05
+VENDOR_SECURITY_PATCH := "2024-04-05"
 
 # SELinux
 include device/qcom/sepolicy-legacy-um/SEPolicy.mk

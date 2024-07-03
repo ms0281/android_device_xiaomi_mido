@@ -17,6 +17,9 @@
 $(call inherit-product, vendor/xiaomi/mido/mido-vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_m.mk)
 
+# Add common definitions for Qualcomm
+$(call inherit-product, hardware/qcom-caf/common/common.mk)
+
 TARGET_BOARD_PLATFORM := msm8953
 TARGET_BOARD_SUFFIX := _64
 
@@ -181,13 +184,11 @@ PRODUCT_PACKAGES += \
     android.hardware.memtrack@1.0-service \
     gralloc.msm8953 \
     hwcomposer.msm8953 \
-    libgralloc.system.qti \
-    libqdMetaData.system \
+    libqdMetaData \
     libtinyxml \
     libvulkan \
     memtrack.msm8953 \
-    vendor.display.config@1.0.vendor \
-    vendor.qti.hardware.display.mapper@2.0.vendor
+    vendor.display.config@1.0.vendor
 
 # Device-specific settings
 PRODUCT_PACKAGES += \
@@ -208,7 +209,7 @@ PRODUCT_COPY_FILES += \
 # DRM
 PRODUCT_PACKAGES += \
     android.hardware.drm-service.clearkey \
-    android.hardware.drm@1.4.vendor
+    android.hardware.drm-V1-ndk.vendor
 
 PRODUCT_COPY_FILES += \
         $(LOCAL_PATH)/configs/gpfspath_oem_config.xml:$(TARGET_COPY_OUT_VENDOR)/etc/gpfspath_oem_config.xml
@@ -217,6 +218,7 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     android.hardware.biometrics.fingerprint@2.1-service.xiaomi_mido \
     fakelogprint \
+    liblzma.vendor:64 \
     libshims_gxfpd
 
 # FM
@@ -390,6 +392,10 @@ PRODUCT_PACKAGES += \
     init.uclamp.rc \
     ueventd.qcom.rc
 
+# RemovePackages
+PRODUCT_PACKAGES += \
+    RemovePackages
+
 # RIL
 PRODUCT_PACKAGES += \
     android.hardware.radio@1.5.vendor \
@@ -397,6 +403,7 @@ PRODUCT_PACKAGES += \
     android.hardware.radio.deprecated@1.0.vendor \
     android.hardware.secure_element@1.2.vendor \
     librmnetctl \
+    libsqlite.vendor:64 \
     qti-telephony-hidl-wrapper \
     qti_telephony_hidl_wrapper.xml \
     qti-telephony-utils \
@@ -417,6 +424,7 @@ PRODUCT_PACKAGES += \
     android.frameworks.sensorservice@1.0.vendor \
     android.hardware.sensors@1.0-impl:64 \
     android.hardware.sensors@1.0-service \
+    libpower.vendor \
     libsensorndkbridge:64
     
 # Speed profile services and wifi-service to reduce RAM and storage
@@ -438,7 +446,9 @@ PRODUCT_SOONG_NAMESPACES += \
     vendor/qcom/opensource/usb/etc
 
 PRODUCT_PACKAGES += \
-    android.hardware.usb@1.3-service.basic
+    usb_compositions.conf \
+    android.hardware.usb@1.3-service.basic \
+    android.hardware.usb.gadget@1.2-service-qti
 
 # vndservicemanager
 PRODUCT_PACKAGES += \
@@ -463,7 +473,6 @@ PRODUCT_PACKAGES += \
     libwpa_client:64 \
     hostapd \
     libwifi-hal-qcom:64 \
-    TetheringConfigOverlay \
     WifiOverlay \
     wpa_supplicant \
     wpa_supplicant.conf
@@ -473,3 +482,9 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/wifi/wpa_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant_overlay.conf \
     $(LOCAL_PATH)/wifi/WCNSS_cfg.dat:$(TARGET_COPY_OUT_SYSTEM)/etc/firmware/wlan/prima/WCNSS_cfg.dat \
     $(LOCAL_PATH)/wifi/WCNSS_qcom_cfg.ini:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/WCNSS_qcom_cfg.ini
+
+# Wifi firmware symlinks
+PRODUCT_PACKAGES += \
+    firmware_WCNSS_qcom_cfg.ini_symlink \
+    firmware_WCNSS_qcom_wlan_nv.bin_symlink \
+    firmware_WCNSS_wlan_dictionary.dat_symlink

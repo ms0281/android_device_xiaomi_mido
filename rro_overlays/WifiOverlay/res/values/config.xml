@@ -23,8 +23,11 @@
          is no longer indicative, and a separate config now exists for each band -->
     <bool translatable="false" name="config_wifi5ghzSupport">true</bool>
 
+    <!-- Enable ACS (auto channel selection) for Wifi hotspot (SAP) -->
+    <bool translatable="false" name="config_wifi_softap_acs_supported">false</bool>
+
     <!-- Enable 802.11ac for Wifi hotspot (SAP) -->
-    <bool translatable="false" name="config_wifi_softap_ieee80211ac_supported">true</bool>
+    <bool translatable="false" name="config_wifi_softap_ieee80211ac_supported">false</bool>
 
     <!-- Boolean indicating whether 802.11r Fast BSS Transition is enabled on this platform -->
     <bool translatable="false" name="config_wifi_fast_bss_transition_enabled">true</bool>
@@ -35,14 +38,17 @@
          capability can provide power savings when wifi needs to be always kept on. -->
     <bool translatable="false" name="config_wifi_background_scan_support">true</bool>
 
+    <!-- True if the firmware supports Wi-Fi link probing -->
+    <bool name="config_wifi_link_probing_supported">true</bool>
+
     <!-- Default access point SSID used for tethering -->
     <string name="wifi_tether_configure_ssid_default" translatable="false">Redmi Note 4</string>
 
     <!-- Indicates that AP mode MAC randomization is supported on this device -->
     <bool name="config_wifi_ap_mac_randomization_supported">false</bool>
 
-    <!-- Wifi driver supports WPA3 Simultaneous Authentication of Equals (WPA3-SAE) for softap -->
-    <bool translatable="false" name="config_wifi_softap_sae_supported">true</bool>
+    <!-- Enable WPA2 to WPA3 auto-upgrade -->
+    <bool translatable="false" name="config_wifiSaeUpgradeEnabled">false</bool>
 
     <!-- Indicate the driver support NL80211_REG_CHANGED event. -->
     <bool translatable="false" name="config_wifiDriverSupportedNl80211RegChangedEvent">true</bool>
