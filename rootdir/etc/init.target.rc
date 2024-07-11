@@ -111,19 +111,23 @@ service vendor.qseecomd /vendor/bin/qseecomd
    task_profiles ServiceCapacityLow
 
 service thermal-engine /vendor/bin/thermal-engine
-   class main
-   user root
-   socket thermal-send-client stream 0666 system system
-   socket thermal-recv-client stream 0660 system system
-   socket thermal-recv-passive-client stream 0666 system system
-   socket thermal-send-rule stream 0660 system system
-   group root
+    class main
+    user root
+    group root
+    socket thermal-send-client stream 0660 system oem_2907
+    socket thermal-recv-client stream 0660 system oem_2907
+    socket thermal-recv-passive-client stream 0660 system oem_2907
+    socket thermal-send-rule stream 0660 system oem_2907
 
-service wcnss-service /vendor/bin/wcnss_service
+on property:sys.boot_completed=1
+    restart thermal-engine
+
+service vendor.wcnss-service /vendor/bin/wcnss_service
     class main
     user system
     group system wifi radio
     oneshot
+    task_profiles ServiceCapacityLow
 
 on property:init.svc.surfaceflinger=stopped
     stop ppd
@@ -227,15 +231,3 @@ on boot
     write /dev/cpuset/system-background/uclamp.min 10
     write /dev/cpuset/system-background/uclamp.boosted 0
     write /dev/cpuset/system-background/uclamp.latency_sensitive 0
-
-service folio_daemon /system/bin/folio_daemon
-    class late_start
-    user system
-    group system uhid
-    disabled
-
-on property:init.svc.zygote=running
-    start folio_daemon
-
-on property:init.svc.zygote=stopped
-    stop folio_daemon

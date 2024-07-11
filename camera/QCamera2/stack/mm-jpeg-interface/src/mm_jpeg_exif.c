@@ -376,13 +376,6 @@ int process_sensor_data(cam_sensor_params_t *p_sensor_params,
     LOGE(": Error adding Exif Entry");
   }
 
-  /* F Number */
-  val_rat.num = (uint32_t)(p_sensor_params->f_number * 100);
-  val_rat.denom = 100;
-  rc = addExifEntry(exif_info, EXIFTAGTYPE_F_NUMBER, EXIF_RATIONAL, 1, &val_rat);
-  if (rc) {
-    LOGE(": Error adding Exif Entry");
-  }
   return rc;
 }
 
@@ -586,6 +579,12 @@ int process_meta_data(metadata_buffer_t *p_meta, QOMX_EXIF_INFO *exif_info,
 
       IF_META_AVAILABLE(int32_t, iso, CAM_INTF_META_SENSOR_SENSITIVITY, p_meta) {
         p_3a_params.iso_value= *iso;
+#ifndef USE_HAL_3_3
+        IF_META_AVAILABLE(int32_t, ispSensitivity, CAM_INTF_META_ISP_SENSITIVITY,
+            p_meta) {
+          p_3a_params.iso_value= (*iso)*(*ispSensitivity)/100;
+      }
+#endif
       } else {
         LOGE("Cannot extract Iso value");
       }
