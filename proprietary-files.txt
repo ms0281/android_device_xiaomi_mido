@@ -862,7 +862,6 @@ vendor/lib/libgsl.so|6377c09442221afa58e53468a203fe3ea7e5f5eb
 vendor/lib/libhdr_tm.so|04d3cc1e1c0f9b85ccbee1c86c913665d2fe02f2
 vendor/lib/libllvm-glnext.so|b5f653aa2c9e1ea25c30f84cf8875fa6cb3d94ee
 vendor/lib/libmm-hdcpmgr.so|4364ca206f8d7ffd87d6f552e4760196de62ad7b
-vendor/lib/librs_adreno.so|227edc6fa4e16599d92d3c202112c6021d354a54
 vendor/lib64/egl/eglSubDriverAndroid.so|d6dc70f08a0e68e897c2c8a956a8c2f3e036c540
 vendor/lib64/egl/libEGL_adreno.so|ca0184f73e4894a58cf1a53da9e025ddad9eb74d;SYMLINK=vendor/lib64/libEGL_adreno.so
 vendor/lib64/egl/libGLESv1_CM_adreno.so|b45486353fceb47ec419ef580fdf6d2305a842ff
@@ -877,7 +876,6 @@ vendor/lib64/libgsl.so|4328c6da13f53efb538c13b5e67310bbb07e2a29
 vendor/lib64/libhdr_tm.so|a1b9bbad12217e6b79951774801aa54be6460fd6
 vendor/lib64/libllvm-glnext.so|8b96ab94cd535c163d0548a5802fae9af4930fb7
 vendor/lib64/libmm-hdcpmgr.so|faf9491a8b15b9ca98a71e216ed94a61eca87540
-vendor/lib64/librs_adreno.so|bf87696c917d75da5557c194098faaae5e303a0b
 
 # Graphics - Postprocessing - from FP3-REL-6.A.028.1-gms-fb581341-user
 vendor/bin/hw/vendor.display.color@1.0-service|815cc36f3722fbfb5fdd52f6678309d207888038
@@ -941,13 +939,11 @@ system_ext/lib64/libavenhancements.so|884d8585fe7554ee332e6436241a82f27a098890
 system_ext/lib64/libmmosal.so|2a59fead77df59d9b2c3bec3db4fc0594d0abd73
 vendor/etc/seccomp_policy/mediacodec.policy|3dec19ed56099a36b44cc72ad04ab23b9cc22ace
 vendor/etc/seccomp_policy/mediaextractor.policy|4234a844e9b1aef37397c8cfbd19566966ecd622
-vendor/lib/libFlacSwDec.so|cf635f2627fb277fce39d34d77986bc29ed56f43
 vendor/lib/libmmosal.so|28d324f37d535d53916cb894caf3bb037bbf146d
 vendor/lib/libOmxAacDec.so|ce6447b7138f0e0cf365d97668a5ded072683234
 vendor/lib/libOmxAmrDec.so|78ad175f009fe3fe3e316c9469184142ae813b24
 vendor/lib/libOmxAmrwbplusDec.so|087c71ccc858e4e5d048f5150c39b7f3619ccf02
 vendor/lib/libOmxApeDec.so|85bb0aa592b11111de73063d850c4afa4c9f00cd
-vendor/lib/libOmxApeDecSw.so|c36f7253818ee759988ba430896590fec4f0c570
 vendor/lib/libOmxDsdDec.so|e669191874ef80c9569f06b9827e8c4c1fc2f977
 vendor/lib/libOmxEvrcDec.so|3f58234a838bed1360ba80c2fe09c05173b1e623
 vendor/lib/libOmxG711Dec.so|e95941e80d00bf94944868750e1c55ef2aa601ba
@@ -1211,5 +1207,5 @@ vendor/bin/time_daemon|3fdbe5c7aeee2fc7e8b699bedd7309f768aae5c7
 vendor/etc/init/init.time_daemon.rc|b253ca2a498757e14e1d7a051bf504ae09218f51
 vendor/lib64/libtime_genoff.so|5f9b4a016db1f2d96a6b8281b6cb88d87e4cdd63
 
-# Wi-Fi - from FP3-REL-6.A.028.1-gms-fb581341-user
-vendor/bin/wcnss_service|18a234235418d01f7b6faa8a6bea78de5f4d346a
+# Wi-Fi
+vendor/bin/hw/wpa_supplicant
