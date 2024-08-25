@@ -216,7 +216,7 @@ PRODUCT_COPY_FILES += \
 
 # Fingerprint
 PRODUCT_PACKAGES += \
-    android.hardware.biometrics.fingerprint@2.1-service.xiaomi_mido \
+    android.hardware.biometrics.fingerprint@2.3-service.xiaomi_mido \
     fakelogprint \
     liblzma.vendor:64 \
     libshims_gxfpd
@@ -343,8 +343,15 @@ PRODUCT_PACKAGES += \
     libOmxQcelp13Enc \
     libOmxVdec \
     libOmxVenc \
+    libopus.vendor \
+    libstagefright_amrnb_common.vendor \
+    libstagefright_enc_common \
+    libstagefright_enc_common.vendor \
     libstagefrighthw \
-    libstagefright_enc_common
+    libstagefright_softomx_plugin.vendor \
+    libstagefright_softomx.vendor \
+    libvorbisidec.vendor \
+    libvpx.vendor
 
 # Power
 PRODUCT_PACKAGES += \
@@ -373,7 +380,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     fstab.qcom \
     init.class_main.sh \
-    init.goodix.sh \
     init.qcom.early_boot.sh \
     init.qcom.post_boot.sh \
     init.qcom.sensors.sh \
@@ -442,9 +448,7 @@ PRODUCT_SOONG_NAMESPACES += \
     vendor/qcom/opensource/usb/etc
 
 PRODUCT_PACKAGES += \
-    usb_compositions.conf \
-    android.hardware.usb@1.3-service.basic \
-    android.hardware.usb.gadget@1.2-service-qti
+    android.hardware.usb@1.3-service.basic
 
 # vndservicemanager
 PRODUCT_PACKAGES += \

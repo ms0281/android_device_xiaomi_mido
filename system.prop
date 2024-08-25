@@ -45,7 +45,6 @@ pm.dexopt.shared=quicken
 # Display
 debug.egl.hw=0
 debug.enable.sglscale=1
-debug.hwui.renderer=vulkan
 debug.hwui.skia_atrace_enabled=false
 debug.mdpcomp.logs=0
 debug.renderengine.backend=skiaglthreaded
@@ -78,6 +77,7 @@ ro.lmk.downgrade_pressure=30
 
 # Media
 av.debug.disable.pers.cache=1
+debug.stagefright.c2inputsurface=-1
 media.aac_51_output_enabled=true
 media.msm8956hw=0
 mmp.enable.3g2=true

@@ -26,7 +26,12 @@ fpc.fp.miui.token               u:object_r:vendor_fp_prop:s0
 goodix.fp.                      u:object_r:vendor_fp_prop:s0
 ro.boot.fpsensor                u:object_r:vendor_fp_prop:s0
 ro.hardware.fingerprint         u:object_r:vendor_fp_prop:s0
+ro.register.count               u:object_r:vendor_fp_prop:s0
+ro.template.count               u:object_r:vendor_fp_prop:s0
 sys.fp.                         u:object_r:vendor_fp_prop:s0
+
+# Graphics HAL
+ro.hardware.chipname	u:object_r:deprecated_soc_prop:s0 exact string
 
 # iwlan
 persist.vendor.iwlan.logging.logcat          u:object_r:vendor_cnd_vendor_prop:s0

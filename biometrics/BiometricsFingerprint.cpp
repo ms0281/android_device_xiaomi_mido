@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#define LOG_TAG "android.hardware.biometrics.fingerprint@2.1-service.xiaomi_mido"
-#define LOG_VERBOSE "android.hardware.biometrics.fingerprint@2.1-service.xiaomi_mido"
+#define LOG_TAG "android.hardware.biometrics.fingerprint@2.3-service.xiaomi_mido"
 
 #include <hardware/hw_auth_token.h>
+
+#include <android-base/strings.h>
 #include <hardware/hardware.h>
 #include <hardware/fingerprint.h>
 #include "BiometricsFingerprint.h"
@@ -28,13 +29,15 @@ namespace android {
 namespace hardware {
 namespace biometrics {
 namespace fingerprint {
-namespace V2_1 {
+namespace V2_3 {
 namespace implementation {
 
 // Supported fingerprint HAL version
 
 using RequestStatus =
         android::hardware::biometrics::fingerprint::V2_1::RequestStatus;
+
+using ::android::base::StartsWith;
 
 BiometricsFingerprint *BiometricsFingerprint::sInstance = nullptr;
 
@@ -199,10 +202,16 @@ Return<RequestStatus> BiometricsFingerprint::setActiveGroup(uint32_t gid,
         ALOGE("Bad path length: %zd", storePath.size());
         return RequestStatus::SYS_EINVAL;
     }
-    if (access(storePath.c_str(), W_OK)) {
+    std::string mutableStorePath = storePath;
+    if (android::base::StartsWith(mutableStorePath, "/data/system/users/")) {
+        mutableStorePath = "/data/vendor_de/";
+        mutableStorePath +=
+            static_cast<std::string>(storePath).substr(strlen("/data/system/users/"));
+    }
+    if (access(mutableStorePath.c_str(), W_OK)) {
         return RequestStatus::SYS_EINVAL;
     }
-    int ret = mDevice->set_active_group(mDevice, gid, storePath.c_str());
+    int ret = mDevice->set_active_group(mDevice, gid, mutableStorePath.c_str());
     /* set active group hack for goodix */
     if ((ret > 0) && is_goodix)
         ret = 0;
@@ -212,6 +221,19 @@ Return<RequestStatus> BiometricsFingerprint::setActiveGroup(uint32_t gid,
 Return<RequestStatus> BiometricsFingerprint::authenticate(uint64_t operationId,
         uint32_t gid) {
     return ErrorFilter(mDevice->authenticate(mDevice, operationId, gid));
+}
+
+Return<bool> BiometricsFingerprint::isUdfps(uint32_t /*sensorId*/) {
+    return false;
+}
+
+Return<void> BiometricsFingerprint::onFingerDown(uint32_t /*x*/, uint32_t /*y*/, float /*minor*/,
+                                                 float /*major*/) {
+    return Void();
+}
+
+Return<void> BiometricsFingerprint::onFingerUp() {
+    return Void();
 }
 
 IBiometricsFingerprint* BiometricsFingerprint::getInstance() {
@@ -332,7 +354,7 @@ void BiometricsFingerprint::notify(const fingerprint_msg_t *msg) {
 }
 
 }  // namespace implementation
-}  // namespace V2_1
+}  // namespace V2_3
 }  // namespace fingerprint
 }  // namespace biometrics
 }  // namespace hardware
