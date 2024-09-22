@@ -26,7 +26,6 @@
 #
 
 import /vendor/etc/init/hw/init.qcom.usb.rc
-import /vendor/etc/init/hw/init.msm.usb.configfs.rc
 import /vendor/etc/init/hw/init.target.rc
 import /vendor/etc/init/hw/init.parts.rc
 
@@ -54,8 +53,6 @@ on init
 on early-boot
     # Allow subsystem (modem etc) debugging
     write /sys/kernel/boot_adsp/boot 1
-
-    exec u:r:vendor_qti_init_shell:s0 -- /vendor/bin/init.qcom.early_boot.sh
 
     # Graphics
     chown system graphics /sys/class/graphics/fb0/idle_time
@@ -88,7 +85,8 @@ on boot
     mkdir /persist/drm 0770 system system
     mkdir /mnt/vendor/persist/bluetooth 0770 bluetooth bluetooth
     mkdir /persist/misc 0770 system system
-    mkdir /mnt/vendor/persist/alarm 0770 system system
+    mkdir /persist/alarm 0777 system system
+    chmod 0666 /persist/alarm/data
     mkdir /mnt/vendor/persist/time 0770 system system
     mkdir /mnt/vendor/persist/secnvm 0770 system system
 
@@ -184,6 +182,11 @@ on post-fs-data
     # Create dir for TUI
     mkdir /data/vendor/tui 0700 system drmrpc
 
+    start vendor.qcrild
+    start vendor.qcrild2
+    start vendor.dataqti
+    start vendor.dataadpl
+
     # Mark the copy complete flag to not completed
     write /data/vendor/radio/copy_complete 0
     chown radio radio /data/vendor/radio/copy_complete
@@ -225,6 +228,9 @@ on property:sys.boot_completed=1
     #Reinit lmkd to reconfigure lmkd properties
     setprop lmkd.reinit 1
 
+    swapon_all /vendor/etc/fstab.zram
+    write /proc/sys/vm/swappiness 100
+
 # DSDS - Restart qcrild on data switch
 on property:persist.sys.radio.mobile_data_swap=1
     exec /bin/sleep 3s
@@ -237,12 +243,6 @@ on property:hw.fm.init=0
 
 on property:hw.fm.init=1
     write /sys/module/radio_iris_transport/parameters/fmsmd_set 1
-
-service qcom-c_main-sh /vendor/bin/init.class_main.sh
-    class main
-    user root
-    group root system
-    oneshot
 
 service vendor.qrtr-ns /vendor/bin/qrtr-ns -f
     class core
