@@ -416,3 +416,7 @@ PRODUCT_PACKAGES += \
     firmware_WCNSS_qcom_cfg.ini_symlink \
     firmware_WCNSS_qcom_wlan_nv.bin_symlink \
     firmware_WCNSS_wlan_dictionary.dat_symlink
+
+# Override OTA & Recovery keys
+PRODUCT_OTA_PUBLIC_KEYS := vendor/lineage/build/target/product/security/releasekey
+PRODUCT_EXTRA_RECOVERY_KEYS := vendor/lineage/build/target/product/security/releasekey
