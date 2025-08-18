@@ -376,7 +376,7 @@ PRODUCT_PACKAGES += \
 
 # Touch features
 PRODUCT_PACKAGES += \
-    vendor.lineage.touch@1.0-service.xiaomi_mido
+    vendor.lineage.touch-service.xiaomi_mido
 
 # USB HAL
 PRODUCT_SOONG_NAMESPACES += \
