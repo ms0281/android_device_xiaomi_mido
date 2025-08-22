@@ -1,123 +1,69 @@
 /*
- * Copyright (C) 2019 The LineageOS Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * SPDX-FileCopyrightText: 2019-2025 The LineageOS Project
+ *                         2025 KamiKaonashi
+ * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <dlfcn.h>
-
-#define LOG_TAG "vendor.lineage.livedisplay@2.0-service.xiaomi_mido"
+#define LOG_TAG "vendor.lineage.livedisplay-service.xiaomi_mido"
 
 #include <android-base/logging.h>
+#include <android/binder_manager.h>
+#include <android/binder_process.h>
 #include <binder/ProcessState.h>
-#include <hidl/HidlTransportSupport.h>
-
+#include <dlfcn.h>
 #include "PictureAdjustment.h"
 
-using android::OK;
-using android::sp;
-using android::status_t;
-using android::hardware::configureRpcThreadpool;
-using android::hardware::joinRpcThreadpool;
-
-using ::vendor::lineage::livedisplay::V2_0::sdm::PictureAdjustment;
+using ::aidl::vendor::lineage::livedisplay::sdm::PictureAdjustment;
 
 int main() {
-  // Vendor backend
-  void *libHandle = nullptr;
-  const char *libName = "libsdm-disp-vndapis.so";
-  int32_t (*disp_api_init)(uint64_t *, uint32_t) = nullptr;
-  int32_t (*disp_api_deinit)(uint64_t, uint32_t) = nullptr;
-  uint64_t cookie = 0;
+    void* libHandle = nullptr;
+    const char* libName = "libsdm-disp-vndapis.so";
+    int32_t (*disp_api_init)(uint64_t*, uint32_t) = nullptr;
+    int32_t (*disp_api_deinit)(uint64_t, uint32_t) = nullptr;
+    uint64_t cookie = 0;
 
-  // HIDL frontend
-  sp<PictureAdjustment> pa;
+    android::ProcessState::self()->setThreadPoolMaxThreadCount(1);
+    android::ProcessState::self()->startThreadPool();
 
-  status_t status = OK;
+    LOG(INFO) << "LiveDisplay AIDL HAL service is starting.";
 
-  android::ProcessState::initWithDriver("/dev/vndbinder");
-
-  LOG(INFO) << "LiveDisplay HAL service is starting.";
-
-  libHandle = dlopen(libName, RTLD_NOW);
-
-  if (libHandle == nullptr) {
-    LOG(ERROR) << "Failed to load SDM display lib, exiting.";
-    goto shutdown;
-  }
-
-  disp_api_init = reinterpret_cast<int32_t (*)(uint64_t *, uint32_t)>(
-      dlsym(libHandle, "disp_api_init"));
-  if (disp_api_init == nullptr) {
-    LOG(ERROR) << "Can not get disp_api_init from " << libName << " ("
-               << dlerror() << ")";
-    goto shutdown;
-  }
-
-  disp_api_deinit = reinterpret_cast<int32_t (*)(uint64_t, uint32_t)>(
-      dlsym(libHandle, "disp_api_deinit"));
-  if (disp_api_deinit == nullptr) {
-    LOG(ERROR) << "Can not get disp_api_deinit from " << libName << " ("
-               << dlerror() << ")";
-    goto shutdown;
-  }
-
-  status = disp_api_init(&cookie, 0);
-  if (status != OK) {
-    LOG(ERROR) << "Can not initialize " << libName << " (" << status << ")";
-    goto shutdown;
-  }
-
-  pa = new PictureAdjustment(libHandle, cookie);
-  if (pa == nullptr) {
-    LOG(ERROR) << "Can not create an instance of LiveDisplay HAL "
-                  "PictureAdjustment Iface, "
-                  "exiting.";
-    goto shutdown;
-  }
-
-  if (!pa->isSupported()) {
-    // Backend isn't ready yet, so restart and try again
-    goto shutdown;
-  }
-
-  configureRpcThreadpool(1, true /*callerWillJoin*/);
-
-  if (pa->isSupported()) {
-    status = pa->registerAsService();
-    if (status != OK) {
-      LOG(ERROR) << "Could not register service for LiveDisplay HAL "
-                    "PictureAdjustment Iface ("
-                 << status << ")";
-      goto shutdown;
+    libHandle = dlopen(libName, RTLD_NOW);
+    if (!libHandle) {
+        LOG(ERROR) << "Failed to load " << libName;
+        return 1;
     }
-  }
 
-  LOG(INFO) << "LiveDisplay HAL service is ready.";
-  joinRpcThreadpool();
-  // Should not pass this line
+    disp_api_init = reinterpret_cast<int32_t (*)(uint64_t*, uint32_t)>(
+            dlsym(libHandle, "disp_api_init"));
+    disp_api_deinit = reinterpret_cast<int32_t (*)(uint64_t, uint32_t)>(
+            dlsym(libHandle, "disp_api_deinit"));
 
-shutdown:
-  // Cleanup what we started
-  if (disp_api_deinit != nullptr) {
+    if (!disp_api_init || !disp_api_deinit || disp_api_init(&cookie, 0) != 0) {
+        LOG(ERROR) << "Failed to init SDM display interface";
+        if (libHandle) dlclose(libHandle);
+        return 1;
+    }
+
+    auto pa = ndk::SharedRefBase::make<PictureAdjustment>(libHandle, cookie);
+    if (!pa->isSupported()) {
+        LOG(ERROR) << "PictureAdjustment not supported, quitting.";
+        disp_api_deinit(cookie, 0);
+        dlclose(libHandle);
+        return 1;
+    }
+
+    std::string instance = std::string() + PictureAdjustment::descriptor + "/default";
+    if (AServiceManager_addService(pa->asBinder().get(), instance.c_str()) != STATUS_OK) {
+        LOG(ERROR) << "Failed to register PictureAdjustment AIDL service";
+        return 1;
+    }
+
+    LOG(INFO) << "LiveDisplay AIDL HAL service ready";
+    ABinderProcess_joinThreadPool();
+
+    // Cleanup if threadpool exits (shouldn’t)
     disp_api_deinit(cookie, 0);
-  }
+    if (libHandle) dlclose(libHandle);
 
-  if (libHandle != nullptr) {
-    dlclose(libHandle);
-  }
-
-  // In normal operation, we don't expect the thread pool to shutdown
-  LOG(ERROR) << "LiveDisplay HAL service is shutting down.";
-  return 1;
+    return 1;
 }

@@ -1,0 +1,5 @@
+service vendor.livedisplay-hal /vendor/bin/hw/vendor.lineage.livedisplay-service.xiaomi_mido
+    class late_start
+    user system
+    group system
+    task_profiles ServiceCapacityLow
